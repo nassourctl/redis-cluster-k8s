@@ -33,19 +33,19 @@ kubectl get storageclass
 
 ## DÉPLOIEMENT REDIS CLUSTER (ÉTAPES)
 
-### ÉTAPE 1️ — Créer un namespace dédié
+### ÉTAPE 1️ - Créer un namespace dédié
 ```
 kubectl create namespace redis
 
 ```
-### ÉTAPE 2️ — Ajouter le repo Helm Bitnami et mettre à jour
+### ÉTAPE 2️ - Ajouter le repo Helm Bitnami et mettre à jour
 ```
 helm repo add bitnami https://charts.bitnami.com/bitnami
 helm repo update
 helm search repo redis-cluster
 ```
 
-### ÉTAPE 3️ — Créer le fichier redis-values.yaml pour PROD
+### ÉTAPE 3️ - Créer le fichier redis-values.yaml pour PROD
 ```
 image:
   registry: docker.io
@@ -79,25 +79,25 @@ metrics:
 
 ```
 
-### ÉTAPE 4️ — Installer Redis Cluster avec Helm
+### ÉTAPE 4️ - Installer Redis Cluster avec Helm
 ```
 helm install redis-cluster bitnami/redis-cluster -n redis -f redis-values.yaml
 
 ```
 
-### ÉTAPE 5️ — Vérifier que tous les pods sont en Running
+### ÉTAPE 5️ - Vérifier que tous les pods sont en Running
 ```
 kubectl get pods -n redis -w
 
 ```
 
-### ÉTAPE 6️ — Vérifier les PersistentVolumeClaims (PVC)
+### ÉTAPE 6️ - Vérifier les PersistentVolumeClaims (PVC)
 ```
 kubectl get pvc -n redis
 
 ```
 
-###  ÉTAPE 7️ — Récupérer le mot de passe Redis et vérifier le cluster
+###  ÉTAPE 7️ - Récupérer le mot de passe Redis et vérifier le cluster
 ```
 $RedisPassword = kubectl get secret redis-cluster -n redis -o jsonpath="{.data.redis-password}" | % { [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($_)) }
 
@@ -105,7 +105,7 @@ kubectl exec -it redis-cluster-master-0 -n redis -- redis-cli -a $RedisPassword 
 
 ```
 
-### ÉTAPE 8️ — Tester Redis  
+### ÉTAPE 8️ - Tester Redis  
 ```
 kubectl exec -it redis-cluster-master-0 -n redis -- redis-cli -c -a $RedisPassword
 
@@ -121,6 +121,5 @@ GET test
 ```
 kubectl get svc -n redis
 kubectl get pods -n redis -o wide
-
-
 ```
+
