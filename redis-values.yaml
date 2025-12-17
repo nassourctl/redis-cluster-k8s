@@ -1,0 +1,29 @@
+image:
+  registry: docker.io
+  repository: bitnami/redis
+  tag: latest
+
+cluster:
+  nodes: 3
+  replicas: 2
+
+auth:
+  enabled: true
+  password: "Password123"
+
+persistence:
+  enabled: true
+  size: 2Gi
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 512Mi
+  limits:
+    cpu: 500m
+    memory: 1Gi
+
+podAntiAffinityPreset: hard
+
+metrics:
+  enabled: true
