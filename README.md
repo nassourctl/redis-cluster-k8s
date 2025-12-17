@@ -2,11 +2,11 @@
 
 # Déploiement Redis Cluster sur Kubernetes
 
-Ce guide décrit pas-à-pas comment déployer un **Redis Cluster** sur un cluster Kubernetes avec Helm, prêt pour Windows PowerShell.
+Ce guide décrit pas-à-pas comment déployer un **Redis Cluster** sur un cluster Kubernetes avec Helm.
 
 ---
 
-## PRÉREQUIS (À VÉRIFIER AVANT)
+## PRÉREQUIS À VÉRIFIER
 
 Avant de commencer, assurez-vous que votre cluster est prêt et que les outils nécessaires sont installés.
 
@@ -16,17 +16,13 @@ kubectl cluster-info
 kubectl get nodes
 ```
 
-### 1️ Vérifier kubectl
+### 1️ Vérifier kubectl et Helm
 ```
 kubectl version --client
-```
-
-### 2️ Installer Helm (si ce n'est pas déjà fait)
-```
 helm version
 ```
 
-### 3️ Vérifier la présence d'une StorageClass (OBLIGATOIRE)
+### 2 Vérifier la présence d'une StorageClass
 ```
 kubectl get storageclass
 ```
@@ -45,7 +41,7 @@ helm repo update
 helm search repo redis-cluster
 ```
 
-### ÉTAPE 3️ - Créer le fichier redis-values.yaml pour PROD
+### ÉTAPE 3️ - Créer le fichier redis-values.yaml
 ```
 image:
   registry: docker.io
@@ -116,10 +112,9 @@ SET test "Hello from PowerShell"
 GET test
 ```
 
-### VÉRIFICATIONS IMPORTANTES (PROD)
+### VÉRIFICATIONS IMPORTANTES
 
 ```
 kubectl get svc -n redis
 kubectl get pods -n redis -o wide
 ```
-
