@@ -10,29 +10,29 @@ Ce guide décrit pas-à-pas comment déployer un **Redis Cluster** sur un cluste
 
 Avant de commencer, assurez-vous que votre cluster est prêt et que les outils nécessaires sont installés.
 
-### 0️ Vérifier que le cluster Kubernetes est opérationnel
-```powershell
+### ÉTAPE 1️ - Vérifier que le cluster Kubernetes est opérationnel
+```
 kubectl cluster-info
 kubectl get nodes
 ```
 
-### 1️ Vérifier kubectl et Helm
+### ÉTAPE 2 - Vérifier kubectl et Helm
 ```
 kubectl version --client
 helm version
 ```
 
-### 2 Vérifier la présence d'une StorageClass
+### ÉTAPE 3 - Vérifier la présence d'une StorageClass
 ```
 kubectl get storageclass
 ```
+---
 
-## DÉPLOIEMENT REDIS CLUSTER (ÉTAPES)
+## DÉPLOIEMENT REDIS CLUSTER
 
 ### ÉTAPE 1️ - Créer un namespace dédié
 ```
 kubectl create namespace redis
-
 ```
 ### ÉTAPE 2️ - Ajouter le repo Helm Bitnami et mettre à jour
 ```
@@ -50,7 +50,7 @@ image:
 
 cluster:
   nodes: 3
-  replicas: 2
+  replicas: 3
 
 auth:
   enabled: true
@@ -58,63 +58,55 @@ auth:
 
 persistence:
   enabled: true
-  size: 2Gi
+  size: 10Gi
 
 resources:
   requests:
     cpu: 250m
-    memory: 512Mi
+    memory: 1Gi
   limits:
     cpu: 500m
-    memory: 1Gi
+    memory: 2Gi
 
 podAntiAffinityPreset: hard
 
 metrics:
   enabled: true
-
 ```
 
 ### ÉTAPE 4️ - Installer Redis Cluster avec Helm
 ```
 helm install redis-cluster bitnami/redis-cluster -n redis -f redis-values.yaml
-
 ```
 
 ### ÉTAPE 5️ - Vérifier que tous les pods sont en Running
 ```
 kubectl get pods -n redis -w
-
 ```
 
 ### ÉTAPE 6️ - Vérifier les PersistentVolumeClaims (PVC)
 ```
 kubectl get pvc -n redis
-
 ```
 
 ###  ÉTAPE 7️ - Récupérer le mot de passe Redis et vérifier le cluster
 ```
-$RedisPassword = kubectl get secret redis-cluster -n redis -o jsonpath="{.data.redis-password}" | % { [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($_)) }
-
+$RedisPassword = kubectl get secret redis-cluster -n redis -o jsonpath="{.data.redis-password}" | base64 -d
 kubectl exec -it redis-cluster-master-0 -n redis -- redis-cli -a $RedisPassword cluster info
-
 ```
 
 ### ÉTAPE 8️ - Tester Redis  
 ```
 kubectl exec -it redis-cluster-master-0 -n redis -- redis-cli -c -a $RedisPassword
-
 ```
 Dans Redis CLI :
 ```
 SET test "Hello from PowerShell"
 GET test
 ```
-
-### VÉRIFICATIONS IMPORTANTES
-
+Vérifications importantes
 ```
 kubectl get svc -n redis
 kubectl get pods -n redis -o wide
 ```
+
